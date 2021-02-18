@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
-
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
          jsonPlaceholderApi= retrofit.create(JsonPlaceholderApi.class);
 
         // getposts();
-        getcomment();
+       // getcomment();
+         CreatePost();
     }
          public void getposts() {
             Call<List<Post>> call = jsonPlaceholderApi.getposts();
@@ -91,6 +91,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+        public void CreatePost(){
+        Post post=new Post(23,"Title of Product","Email");
 
-
-}
+        Call<Post> call= jsonPlaceholderApi.Createposts(post);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()) {
+                    textViewResults.setText("Code:" + response.code());
+                    return;
+                }
+                Post postResponse=response.body();
+                String content = "";
+                content += "Code:" + response.code() + "\n";
+                content += "ID:" + postResponse.getId() + "\n";
+                content += "User ID:" + postResponse.getUserId() + "\n";
+                content += "Title:" + postResponse.getTitle() + "\n";
+                content += "Text:" + postResponse.getText() + "\n\n";
+                textViewResults.setText(content);
+            }
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                textViewResults.setText(t.getMessage());
+            }
+        });
+        }
+    }
